@@ -8,7 +8,7 @@ env:
   PROJECT_ID: 'gke-opt-demo'
   PROJECT_NUMBER: '1034414536999'
 
-  CLUSTER: 'autopilot-cluster-1'
+  CLUSTER: 'gke-opt-demo'
   REGION: 'us-central1'
   
 jobs:
