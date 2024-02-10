@@ -30,7 +30,7 @@ jobs:
         workload_identity_provider: 'projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-actions/providers/github-actions-oidc'
         service_account: 'github-actions-workflow@${{ env.PROJECT_ID }}.iam.gserviceaccount.com'
 
-    - id: 'Connect to GKE'
+    - name: 'Connect to GKE'
       uses: 'google-github-actions/get-gke-credentials@v2'
       with:
         cluster_name: ${{ env.CLUSTER }}
