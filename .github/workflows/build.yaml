@@ -9,7 +9,7 @@ env:
   PROJECT_NUMBER: '1034414536999'
 
   CLUSTER: 'online-boutique'
-  REGION: 'us-central1'
+  LOCATION: 'us-central1-f'
   
 jobs:
   build:
@@ -34,7 +34,7 @@ jobs:
       uses: 'google-github-actions/get-gke-credentials@v2'
       with:
         cluster_name: ${{ env.CLUSTER }}
-        location: ${{ env.REGION }}
+        location: ${{ env.LOCATION }}
 
     # The KUBECONFIG env var is automatically exported and picked up by kubectl.
     - id: 'get-pods'
