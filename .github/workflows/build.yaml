@@ -1,4 +1,4 @@
-name: Deploy Ngnix
+name: Deploy Online Boutique
 
 on:
   push:
