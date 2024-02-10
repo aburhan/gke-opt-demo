@@ -38,4 +38,4 @@ jobs:
 
     # The KUBECONFIG env var is automatically exported and picked up by kubectl.
     - id: 'get-pods'
-      run: 'kubectl apply -f ./manifests/kubernetes-manifests.yaml'
+      run: 'kubectl apply -f ../manifests/adservice.yaml'
