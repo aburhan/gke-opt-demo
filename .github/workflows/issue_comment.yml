@@ -1,21 +1,18 @@
-name: Create a comment on new issues
+name: Create a comment on PR
 
 on:
-  issues:
-    type: [opened]
+  pull_request:
+    types: [opened, reopened]
+    #paths:
+     # - '**.yaml'
 
 jobs:
-  commment-with-action:
+  commment-with-api:
     runs-on: ubuntu-latest
     steps:
-      - name: "Create comment"
-        uses: peter-evans/create-or-update-comment@v4
-        with:
-          issue-number: ${{ github.event.issue.number }}
-          body: |
-            This is a multi-line test comment
-            - With GitHub **Markdown** :sparkles:
-            - Created by [create-or-update-comment][1]
-
-            [1]: https://github.com/peter-evans/create-or-update-comment
-          reactions: '+1'
+      - name: Create comment with API
+        run: |
+          gh api \
+          --method POST \
+          /repos/${ORGANIZATION}/${REPOSITORY}/issues/${ISSUE_NUMBER}/comments \
+          -f body='Me too' 
