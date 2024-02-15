@@ -14,5 +14,5 @@ jobs:
           --method POST \
           /repos/${ORGANIZATION}/${REPOSITORY}/issues/${ISSUE_NUMBER}/comments \
           -f body='Me too' 
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        #env:
+          #GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
