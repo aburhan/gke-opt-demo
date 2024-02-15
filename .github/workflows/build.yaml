@@ -3,7 +3,7 @@ name: Deploy Online Boutique
 on:
   push:
     branches: 
-    - 'main'
+    - 'feature-1'
 env:
   PROJECT_ID: 'gke-opt-demo'
   PROJECT_NUMBER: '1034414536999'
