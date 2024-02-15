@@ -8,9 +8,13 @@ jobs:
   review-pull-request:
     runs-on: ubuntu-latest
     steps:
+    - name: Dump github context
+      run: echo '${{ toJSON(github.event) }}' | jq
+      shell: bash
+        
     - name: Checkout code
-      uses: actions/checkout@v3
-
+      uses: actions/checkout@v4
+    
     - name: Leave a review on the PR
       uses: actions/github-script@v7
       with:
