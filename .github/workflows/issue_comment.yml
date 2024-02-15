@@ -12,6 +12,17 @@ jobs:
         run: echo '${{ toJSON(github.event) }}' | jq
         shell: bash
         
+      - name: Create Issue comment A
+        run: |
+          gh api \
+          --method POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          /repos/${{ github.event.repository.owner.login }}/${{ github.event.repository.name }}/issues/${{ github.event.issue.number }}/comments \
+          -f body='Me too' 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create comment with API
         run: |
           gh api -X POST \
