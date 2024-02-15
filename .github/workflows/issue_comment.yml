@@ -8,11 +8,15 @@ jobs:
   commment-with-api:
     runs-on: ubuntu-latest
     steps:
+      - name: Dump github context
+        run: echo '${{ toJSON(github.event) }}' | jq
+        shell: bash
+        
       - name: Create comment with API
         run: |
           gh api \
           --method POST \
-          /repos/OWNER/REPO/issues/ISSUE_NUMBER/comments \
+          /repos/${{ env.HEAD_OWNER }}//${{ github.event.repository.name }}/issues/${{ github.event.issue.number }}/comments \
           -f body='Me too' 
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
