@@ -9,10 +9,7 @@ class MetricsCalculator:
         self.container_name = container_name
         self.namespace_name = namespace_name
         self.controller_name = controller_name
-    
-        
-
-
+ 
     def query_metric(self, metric_info, days=30):
         metric_name = metric_info['name']
         aggregate_function = metric_info['aggregate_function']
@@ -58,6 +55,7 @@ class MetricsCalculator:
             metric_result = self.query_metric(metric_info, days)
             results.update(metric_result)
         return results
+# TO DO: GET NODE INFOR FROM LATEST POD use the node family class from bigquery using the current filter. 
 
 # Example usage
 if __name__ == "__main__":

@@ -1,0 +1,91 @@
+Instance Family,Workload types,CPU types,vCPUs,vCPU definition,Memory,Max GPUs,Workload use cases
+C3,General purpose,Intel Sapphire Rapids,4 to 176,Thread,"8 to 1,408 GB",0,"High traffic web, app and ad servers
+Databases and caches
+Game servers
+Data analytics
+Media streaming and transcoding
+Network appliances
+CPU-based ML training and inference"
+C3D,General purpose,AMD EPYC Genoa,4 to 360,Thread,"8 to 2,880 GB",0,"High traffic web, app and ad servers
+Databases and caches
+Game servers
+Data analytics
+Media streaming and transcoding
+Network appliances
+CPU-based ML training and inference"
+N2,General purpose,Intel Cascade Lake and Ice Lake,2 to 128,Thread,2 to 864 GB,0,"Low to medium traffic web and application servers
+Containerized microservices
+Business intelligence applications
+Virtual desktops
+CRM applications
+Data pipelines"
+N2D,General purpose,AMD EPYC Rome and EPYC Milan,2 to 224,Thread,2 to 896 GB,0,"Low to medium traffic web and application servers
+Containerized microservices
+Business intelligence applications
+Virtual desktops
+CRM applications
+Data pipelines"
+N1,General purpose,"Intel Skylake, Broadwell, Haswell, Sandy Bridge, and Ivy Bridge",1 to 96,Thread,1.8 to 624 GB,0,"Low to medium traffic web and application servers
+Containerized microservices
+Business intelligence applications
+Virtual desktops
+CRM applications
+Data pipelines"
+T2D,General purpose,AMD EPYC Milan,1 to 60,Core,4 to 240 GB,0,"Low to medium traffic web and application servers
+Containerized microservices
+Business intelligence applications
+Virtual desktops
+CRM applications
+Data pipelines"
+T2A,General purpose,Ampere Altra,1 to 48,Core,4 to 192 GB,0,"Low to medium traffic web and application servers
+Containerized microservices
+Business intelligence applications
+Virtual desktops
+CRM applications
+Data pipelines"
+E2,Cost optimized,"Intel Skylake, Broadwell, and Haswell, AMD EPYC Rome and EPYC Milan",0.25 to 32,Thread,1 to 128 GB,0,"Low-traffic web servers
+Back office apps
+Containerized microservices
+Small databases
+Virtual desktops
+Development and test environments"
+Z3,Storage optimized,Intel Sapphire Rapids,88 or 176,Thread,"704 or 1,408 GB",0,"Workloads that are low in core usage and high in storage density
+Horizontal, scale out databases
+Log analytics
+Data warehouse offerings
+Other database workloads"
+H3,Compute optimized,Intel Sapphire Rapids,88,Core,352 GB,0,"HPC workloads
+Computational fluid dynamics, crash safety, genomics, and financial modeling
+General scientific and engineering computing"
+C2,Compute optimized,Intel Cascade Lake,4 to 60,Thread,16 to 240 GB,0,"Compute-bound workloads
+High-performance web serving
+Gaming (AAA game servers)
+Ad serving
+High performance computing (HPC)
+Media transcoding
+AI/ML"
+C2D,Compute optimized,AMD EPYC Milan,2 to 112,Thread,4 to 896 GB,0,"Memory-bound workloads
+Gaming (AAA game servers)
+High performance computing (HPC)
+High performance databases
+Electronic Design Automation (EDA)
+Media transcoding"
+M3,Memory optimized,Intel Ice Lake,32 to 128,Thread,976 to 3904 GB,0,"OLAP and OLTP SAP workloads
+Memory intensive applications, such as genomic modeling and electronic design automation
+High performance computing"
+M2,Memory optimized,Intel Cascade Lake,208 to 416,Thread,5888 to 11776 GB,0,"Large in-memory databases such as SAP HANA
+In-memory databases and in-memory analytics, business warehousing (BW) workloads, genomics analysis, SQL analysis services, etc."
+M1,Memory optimized,Intel Skylake and Broadwell,40 to 160,Thread,961 to 3844 GB,0,"Medium in-memory databases such as SAP HANA
+Tasks that require intensive use of memory with higher memory-to-vCPU ratios than the general-purpose high-memory machine types.
+In-memory databases and in-memory analytics, business warehousing (BW) workloads, genomics analysis, SQL analysis services.
+Microsoft SQL Server and similar databases."
+N1+GPU,Accelerator optimized,"Intel Skylake, Broadwell, Haswell, Sandy Bridge, and Ivy Bridge",1 to 96,Thread,3.75 to 624 GB,8,
+A3,Accelerator optimized,Intel Sapphire Rapids,208,Thread,1872 GB,8,"Large AI models - Multiple (distributed) server training
+Mainstream AI models - Multiple (distributed) server training
+Mainstream AI models - Single server training
+Large AI models - Inference"
+A2,Accelerator optimized,Intel Cascade Lake,12 to 96,Thread,85 to 1360 GB,16,"Large AI models - Multiple (distributed) server training
+Mainstream AI models - Multiple (distributed) server training
+Mainstream AI models - Single server training
+Large AI models - Inference"
+G2,Accelerator optimized,Intel Cascade Lake,4 to 96,Thread,16 to 432 GB,8,"Video streaming and transcoding, remote virtual workstations, digital twins"

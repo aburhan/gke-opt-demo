@@ -1,0 +1,4 @@
+langchain_community
+google-cloud-aiplatform
+langchain
+pandas

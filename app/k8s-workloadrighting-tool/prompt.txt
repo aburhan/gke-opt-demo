@@ -1,0 +1,14 @@
+Given the following JSON object representing Kubernetes workload resource cpu/memory - usage cpu and memory, current requests and limits, and cpu and memory recommendations:
+
+{workload}
+
+Analyze the data to recommend adjustments to CPU and memory requests and limits for the Kubernetes container named "server" in the "workload" Deployment to ensure reliability. Additionally, recommend a GCP instance type based on the controller type, image, and usage data provided.
+
+Construct a message for a GitHub PR including:
+- A statement on reliability risks for the "controller_name" Deployment's "container" container due to current resource settings.
+- A 30-day usage analysis with max memory and CPU usage.
+- Rightsizing recommendations for memory and CPU requests and limits, including a YAML snippet for updates.
+- A recommendation for a GCP instance type suitable for the workload type, considering the nature of the "workload" Deployment.
+- Notes on resource underutilization or overutilization with implications for increased reliability or cost savings.
+
+Include error handling instructions and specify the file name and line numbers for the recommended updates in the PR message.
