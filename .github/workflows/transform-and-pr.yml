@@ -1,9 +1,7 @@
 name: Transform File and Create PR
 
 on:
-  push:
-    branches:
-      - main  # Trigger on pushes to the main branch, adjust as needed
+  workflow_dispatch:
 
 jobs:
   transform-and-create-pr:
@@ -19,8 +17,8 @@ jobs:
         with:
           python-version: '3.10' 
       
-      - name: Transform file
-        run: python my_script.py
+      #- name: Transform file
+      #  run: python my_script.py
       
       - name: Install dependencies (if any)
         run: |
