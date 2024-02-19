@@ -3,9 +3,20 @@ name: Transform File and Create PR
 on:
   workflow_dispatch:
 
+env:
+  PROJECT_ID: 'gke-opt-demo'
+  PROJECT_NUMBER: '1034414536999'
+
+  CLUSTER: 'online-boutique'
+  LOCATION: 'us-central1-f'
+  
 jobs:
   transform-and-create-pr:
     runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
