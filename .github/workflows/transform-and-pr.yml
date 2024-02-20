@@ -28,15 +28,12 @@ jobs:
         with:
           python-version: '3.10' 
       
-      - name: Transform file
-        run: python app/main.py
-      
       - name: Install dependencies (if any)
         run: |
           pip install -r requirements.txt
 
       - name: Transform file
-        run: python .app//transformation_script.py
+        run: python app/main.py
 
       - name: Commit changes
         run: |
