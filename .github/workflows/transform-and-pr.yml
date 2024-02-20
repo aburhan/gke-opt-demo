@@ -28,8 +28,8 @@ jobs:
         with:
           python-version: '3.10' 
       
-      #- name: Transform file
-      #  run: python my_script.py
+      - name: Transform file
+        run: python app/main.py
       
       - name: Install dependencies (if any)
         run: |
