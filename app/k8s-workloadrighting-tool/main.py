@@ -2,11 +2,23 @@ import os
 import json
 from google.cloud import bigquery
 from google.api_core.exceptions import GoogleAPIError
-import yaml
 import sys
+import yaml
+from google.cloud import asset_v1
+import vertexai
+from vertexai.preview.generative_models import GenerativeModel, Part
+import vertexai.preview.generative_models as generative_models
+from flask import Flask
 
-
-
+def set_env():
+    project_id = get_env_variable('PROJECT_ID')
+    location = get_env_variable('LOCATION')
+    cluster_name = get_env_variable('CLUSTER_NAME')
+    namespace_name = get_env_variable('NAMESPACE')
+    controller_name = get_env_variable('CONTROLLER_NAME')
+    controller_type = get_env_variable('CONTROLLER_TYPE')
+    container_name = get_env_variable('CONTAINER_NAME')
+    
 def get_env_variable(var_name):
     """Fetches an environment variable and raises an error if not found."""
     value = os.getenv(var_name)
@@ -14,11 +26,29 @@ def get_env_variable(var_name):
         raise ValueError(f"Environment variable {var_name} is required but not set.")
     return value
 
+def read_k8s_workload_file(file_path):
+    """
+    Reads a Kubernetes workload file in YAML format and returns the data as a Python dictionary.
+
+    :param file_path: Path to the YAML file containing the Kubernetes workload definition.
+    :return: A dictionary representation of the Kubernetes workload.
+    """
+    with open(file_path, 'r') as file:
+        # Load the YAML file content into a Python dictionary
+        workload_data = yaml.safe_load(file)
+    
+    return workload_data
+    
 def query_bigquery(project_id, location, cluster_name, namespace_name, container_name):
+    
+    # Initialize a BigQuery client
+    client = bigquery.Client()
+    
+    # Initialize a dictionary to hold the results
+    results_dict = {}
+    
     """Constructs the SQL query string to fetch the most recent record using environment variables."""
-    
-    
-    return f"""
+    query = f"""
     WITH RankedRecords AS (
         SELECT *, ROW_NUMBER() OVER (PARTITION BY project_id ORDER BY run_date DESC) AS rn
         FROM `gke-opt-demo.gke_metrics_dataset.workload_recommendations`
@@ -26,94 +56,120 @@ def query_bigquery(project_id, location, cluster_name, namespace_name, container
             project_id = '{project_id}' AND
             location = '{location}' AND
             cluster_name = '{cluster_name}' AND
-            namespace_name = '{namespace}' AND
+            namespace_name = '{namespace_name}' AND
             controller_name = '{controller_name}' AND
             controller_type = '{controller_type}' AND
             container_name = '{container_name}'
     )
-    SELECT * FROM RankedRecords WHERE rn = 1
+    SELECT * FROM RankedRecords WHERE rn = 1 LIMIT 1
     """
+ 
+    # Execute the query
+    results = client.query(query)
 
-    try:
-        # Initialize a BigQuery client
-        client = bigquery.Client()
-
-        # Execute the query
-        query_job = client.query(query)
-
-        # Initialize an empty list to hold query results
-        results = []
-
-        # Iterate over the query results and append each row to the results list as a dict
-        for row in query_job:
-            result_dict = dict(row)
-            results.append(result_dict)
-
-        # Convert the list of dicts to a JSON string
-        json_results = json.dumps(results, default=str)  # default=str to handle non-serializable types like datetime
-
-        # Print the JSON string
-        print(json_results)
-
-    except GoogleAPIError as e:
-        print(f"BigQuery error: {e}")
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-
-def analyze_workload(file_path):
-    with open(file_path, 'r') as file:
-        workload_config = yaml.safe_load(file)
+    for row in results:
+        for column, value in row.items():
+            if column not in results_dict:
+                results_dict[column] = value
+            else:
+                results_dict[column]=value
     
-    # Simplified parsing logic; actual implementation will vary based on the YAML structure
-    project_id = workload_config['project_id']
-    location = workload_config['location']
-    cluster_name = workload_config['cluster_name']
-    namespace_name = workload_config['namespace_name']
-    container_name = workload_config['container_name']
+    return results_dict
 
-    recommendations = query_bigquery(project_id, location, cluster_name, namespace_name, container_name)
-    if not recommendations:
-        print("No recommendations found.")
-        sys.exit(1)
-    
-    recommendation = recommendations[0]  # Assuming one match for simplicity
-    response = {
-        'container_name': container_name,
-        'cpu_recommendation': recommendation['cpu_requested_recommendation'],
-        'memory_recommendation': recommendation['memory_requested_recommendation'],
-        'over_or_under_provisioned': 'under' if (workload_config['cpu_requested'] < recommendation['cpu_requested_recommendation'] or workload_config['memory_requested'] < recommendation['memory_requested_recommendation']) else 'over',
-        # Simplify instance group recommendation logic
-        'recommended_instance_group': 'gcp-instance-group-based-on-usage'  # Placeholder logic
-    }
-    
-    # Determine if pipeline should fail
-    if response['over_or_under_provisioned'] == 'under':
-        response['error'] = 'Resource requests are less than the recommendations. Failing the pipeline.'
-        print(json.dumps(response))
-        sys.exit(1)
-    
-    print(json.dumps(response))
+def asset_inventory():
+    from google.cloud import asset_v1
+    from google.cloud.asset_v1.types import asset_service
 
-def main():
-    """Main function to orchestrate the workflow."""
-    try:
-        query = construct_query()
-        execute_query(query)
-    except ValueError as e:
-        print(f"Error: {e}")
+    # Initialize the Asset Service Client
+    client = asset_v1.AssetServiceClient()
+
+    # Define the scope, query, asset types, and order by parameters
+    scope = "projects/1034414536999"
+    query = "adservice"
+    asset_types = ["apps.k8s.io/Deployment"]
+    order_by = "displayName,createTime"
+
+    # Prepare the request
+    request = asset_service.SearchAllResourcesRequest(
+        scope=scope,
+        query=query,
+        asset_types=asset_types,
+        order_by=order_by
+    )
+
+    # Execute the search and process the response
+    for resource in client.search_all_resources(request=request):
+        print(resource)
+
+def asset_inventory_full():
+    # TODO project_id = 'Your Google Cloud Project ID'
+    # TODO asset_types = 'Your asset type list, e.g.,
+    # ["storage.googleapis.com/Bucket","bigquery.googleapis.com/Table"]'
+    # TODO page_size = 'Num of assets in one page, which must be between 1 and
+    # 1000 (both inclusively)'
+    # TODO content_type ="Content type to list"
+    project_resource = f"projects/gke-opt-demo"
+    client = asset_v1.AssetServiceClient()
+
+    # Call ListAssets v1 to list assets.
+    response = client.list_assets(
+        request={
+            "parent": project_resource,
+            "read_time": None,
+            "asset_types": ["apps.k8s.io/Deployment"],
+            "content_type": asset_v1.ContentType.RESOURCE,
+            "page_size": 1,
+        }
+    )
+
+    for asset in response:
+        print(asset)
+
+def generate_recommendation(workload, manifest_yaml):
+    vertexai.init(project="gke-opt-demo", location="us-central1")
+    model = GenerativeModel("gemini-pro")
+    responses = model.generate_content(
+f"""Act as a Kubernetes expert, giving  the following {workload} structure which represents a workload running in GKE determine if the workload is over or under-provisioned and suggest a compute instance based on the image. then update the yaml with the workload resource recommendations
+    workload: {workload}
+
+    yaml: {manifest_yaml}
+    
+    
+    """,
+    generation_config={
+        "max_output_tokens": 2048,
+        "temperature": 0.9,
+        "top_p": 1
+    },
+    safety_settings={
+          generative_models.HarmCategory.HARM_CATEGORY_HATE_SPEECH: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+          generative_models.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+          generative_models.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+          generative_models.HarmCategory.HARM_CATEGORY_HARASSMENT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+    },
+    stream=True,
+  )
+    return responses
+    
+
+
+
+app = Flask(__name__)
+
+
+@app.route("/")
+def get_recommendations():
+    workload_info = (query_bigquery(project_id, location, cluster_name, namespace_name, container_name))
+    #print(workload_info)
+
+    manifest_yaml = read_k8s_workload_file('adservice.yaml')
+    #print(manifest_yaml)
+
+    responses = generate_recommendation(workload_info, manifest_yaml)
+    for response in responses:
+        output = (response.text, end="")
+    return {output}
+
 
 if __name__ == "__main__":
-    # Example usage: python script.py path/to/your/workload.yaml
-    
-    project_id = get_env_variable('PROJECT_ID')
-    location = get_env_variable('LOCATION')
-    cluster_name = get_env_variable('CLUSTER_NAME')
-    namespace = get_env_variable('NAMESPACE')
-    controller_name = get_env_variable('CONTROLLER_NAME')
-    controller_type = get_env_variable('CONTROLLER_TYPE')
-    container_name = get_env_variable('CONTAINER_NAME')
-
-    print(construct_query())
-    
-
-
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
