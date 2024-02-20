@@ -1,0 +1,4 @@
+google-cloud-bigquery
+pyyaml
+google-cloud-asset
+google-cloud-aiplatform
