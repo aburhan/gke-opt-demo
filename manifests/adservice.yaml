@@ -49,13 +49,6 @@ spec:
         env:
         - name: PORT
           value: "9555"
-        resources:
-          requests:
-            cpu: 210m
-            memory: 180Mi
-          limits:
-            cpu: 300m
-            memory: 300Mi
         readinessProbe:
           initialDelaySeconds: 20
           periodSeconds: 15
